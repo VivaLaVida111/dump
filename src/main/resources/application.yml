@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    username: root
+    password: jinNIU123456!
+    url: jdbc:mysql://101.37.246.72:3306/dummpsite?serverTimezone=GMT%2B8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+server:
+  port: 9090
+
