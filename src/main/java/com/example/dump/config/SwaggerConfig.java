@@ -42,7 +42,7 @@ public class SwaggerConfig {
                 .useDefaultResponseMessages(true)
                 .forCodeGeneration(false)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.example.mapfence.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.example.dump.controller"))
                 .paths(PathSelectors.any())
                 .build()
                 .globalOperationParameters(this.getParameterList());
