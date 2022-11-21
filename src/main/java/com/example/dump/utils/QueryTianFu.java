@@ -33,7 +33,7 @@ public class QueryTianFu {
         return token;
     }
 
-    public static List<GpsRecord> getGPSLocus(String carNumber, String start, String end) {
+    public static List<GpsRecord> getGPSTrack(String carNumber, String start, String end) {
         try {
             String content = String.format("{\n\"Temp_Token\":\"%s\",\n\"Vehicle\":\"%s\",\n\"From\":\"%s\",\n\"To\":\"%s\"\n}\n", getToken(), carNumber, start, end);
             OkHttpClient client = new OkHttpClient().newBuilder()
@@ -160,15 +160,4 @@ public class QueryTianFu {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        List<GpsRecord> gpsRecords = getGPSLocus("川AY9807", "2022-11-16 03:00:00", "2022-11-16 03:55:54");
-        for (int i = 0; i < gpsRecords.size() ; i++) {
-            GpsRecord gpsRecord = gpsRecords.get(i);
-            System.out.println(gpsRecord.getCarNumber());
-            System.out.println(gpsRecord.getLatitude().toString());
-            System.out.println(gpsRecord.getLongitude().toString());
-            System.out.println(gpsRecord.getExactDate());
-            System.out.println(gpsRecord.getDay());
-        }
-    }
 }

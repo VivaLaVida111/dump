@@ -1,7 +1,8 @@
 package com.example.dump.controller;
 
 
-import com.example.dump.entity.DumpRecord;
+import com.example.dump.common.ResponseData;
+import com.example.dump.common.ResultEnum;
 import com.example.dump.entity.GpsRecord;
 import com.example.dump.service.IGpsRecordService;
 import io.swagger.annotations.Api;
@@ -32,9 +33,18 @@ public class GpsRecordController {
     private IGpsRecordService gpsRecordService;
 
     @ApiOperation(value = "查询指定指定车辆在指定时间段的gps记录")
-    @GetMapping("/car_period/{car_number}/{start}/{end}")
-    public List<GpsRecord> selectByCarAndPeriod(@PathVariable String car_number, @PathVariable String start, @PathVariable String end) {
-        return gpsRecordService.selectByCarAndPeriod(car_number, start, end);
+    @GetMapping("/track/{car_number}/{start}/{end}")
+    public ResponseData<Object> selectByCarAndPeriod(@PathVariable String car_number, @PathVariable String start, @PathVariable String end) {
+        List<GpsRecord> res = gpsRecordService.selectByCarAndPeriod(car_number, start, end);
+        ResponseData<Object> responseData = null;
+        if (res == null || res.size() == 0) {
+            responseData = new ResponseData<>(ResultEnum.FAILED);
+            responseData.setData("error: 车牌号不存在或查询操作太频繁");
+            return  responseData;
+        }
+        responseData = new ResponseData<>(ResultEnum.SUCCESS);
+        responseData.setData(res);
+        return responseData;
     }
 }
 

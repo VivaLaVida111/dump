@@ -37,7 +37,7 @@ public class GpsRecordServiceImpl extends ServiceImpl<GpsRecordMapper, GpsRecord
         if (car != null) {
             return gpsRecordMapper.selectByCarAndPeriod(carNumber, start, end);
         } else {
-            return  QueryTianFu.getGPSLocus(carNumber, start, end);
+            return  QueryTianFu.getGPSTrack(carNumber, start, end);
         }
     }
 }
