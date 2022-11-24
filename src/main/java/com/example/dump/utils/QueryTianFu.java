@@ -47,9 +47,9 @@ public class QueryTianFu {
                     .build();
             Response response = client.newCall(request).execute();
             JSONObject jo = JSON.parseObject(response.body().string());
-            return recData(carNumber, (String) jo.get("Key"));
+            return recData(carNumber, (String) jo.get("Key"), start, end);
         } catch (Exception e) {
-            LOGGER.error("error: ", e);
+            LOGGER.error("error: carNumber: {}, start: {}, end: {}", carNumber, start, end, e);
             return null;
         }
     }
@@ -99,7 +99,7 @@ public class QueryTianFu {
         }
     }
 
-    private static List<GpsRecord> recData(String carNumber, String token) {
+    private static List<GpsRecord> recData(String carNumber, String token, String start, String end) {
         try {
             List<GpsRecord> res = new ArrayList<>();
 
@@ -155,7 +155,7 @@ public class QueryTianFu {
             }
             return res;
         } catch (Exception e) {
-            LOGGER.error("error: ", e);
+            LOGGER.error("error: carNumber: {}, start: {}, end: {}, token: {}", carNumber, start, end, token, e);
             return null;
         }
     }
