@@ -117,6 +117,9 @@ public class QueryTianFu {
             Response response = client.newCall(request).execute();
             JSONObject jo = JSON.parseObject(response.body().string());
             JSONArray array = jo.getJSONArray("PACK");
+            if (array == null) {
+                LOGGER.warn("content of http recData request: {}", jo);
+            }
             for (Object item : array) {
                 if (item instanceof JSONObject) {
                     JSONObject record = (JSONObject) item;
