@@ -46,8 +46,18 @@ public class QueryTianFu {
                     .addHeader("Content-Type", "application/json")
                     .build();
             Response response = client.newCall(request).execute();
-            JSONObject jo = JSON.parseObject(response.body().string());
-            return recData(carNumber, (String) jo.get("Key"), start, end);
+            JSONObject jBody = JSON.parseObject(response.body().string());
+            Headers headers = response.headers();
+            String cookie = "";
+            for (int i = 0; i < headers.size(); i++) {
+                if ("set-cookie".equals(headers.name(i))) {
+                    //System.out.println(headers.name(i));
+                    String[] cookies = headers.get(headers.name(i)).split(";");
+                    cookie = cookies[0];
+                    //System.out.println(cookie);
+                }
+            }
+            return recData(carNumber, (String) jBody.get("Key"), start, end, cookie);
         } catch (Exception e) {
             LOGGER.error("error: carNumber: {}, start: {}, end: {}", carNumber, start, end, e);
             return null;
@@ -99,7 +109,7 @@ public class QueryTianFu {
         }
     }
 
-    private static List<GpsRecord> recData(String carNumber, String token, String start, String end) {
+    private static List<GpsRecord> recData(String carNumber, String token, String start, String end, String cookie) {
         try {
             List<GpsRecord> res = new ArrayList<>();
 
@@ -112,7 +122,7 @@ public class QueryTianFu {
                     .url("https://chelian.gpskk.com/Data/GZIP/RecData")
                     .method("POST", body)
                     .addHeader("Content-Type", "application/json")
-//                    .addHeader("Cookie", "SERVERID=9b5738b78213ba4752874f30bc478cb6|1668664662|1668664587")
+                    .addHeader("Cookie", cookie)
                     .build();
             Response response = client.newCall(request).execute();
             JSONObject jo = JSON.parseObject(response.body().string());
@@ -158,7 +168,7 @@ public class QueryTianFu {
             }
             return res;
         } catch (Exception e) {
-            LOGGER.error("error: carNumber: {}, start: {}, end: {}, token: {}", carNumber, start, end, token, e);
+            LOGGER.error("error: carNumber: {}, start: {}, end: {}, token: {}, cookie: {}", carNumber, start, end, token, cookie, e);
             return null;
         }
     }
