@@ -130,7 +130,8 @@ public class QueryTianFu {
             if (array == null) {
                 LOGGER.warn("content of http recData request: {}", jo);
             }
-            for (Object item : array) {
+            for (int i = 0; i < array.size(); i++) {
+                Object item = array.get(i);
                 if (item instanceof JSONObject) {
                     JSONObject record = (JSONObject) item;
                     GpsRecord gpsRecord = new GpsRecord();
@@ -163,13 +164,32 @@ public class QueryTianFu {
                     gpsRecord.setExactDate(exactDate);
 
                     gpsRecord.setCarNumber(carNumber);
-                    res.add(gpsRecord);
+                    if (i == 0 || locChanged(res.get(res.size() - 1), gpsRecord)) {
+                        res.add(gpsRecord);
+                    }
                 }
             }
             return res;
         } catch (Exception e) {
             LOGGER.error("error: carNumber: {}, start: {}, end: {}, token: {}, cookie: {}", carNumber, start, end, token, cookie, e);
             return null;
+        }
+    }
+
+    private static Boolean locChanged(GpsRecord lastRecord, GpsRecord newRecord) {
+        BigDecimal newLat = new BigDecimal(newRecord.getLatitude());
+        BigDecimal newLng = new BigDecimal(newRecord.getLongitude());
+        BigDecimal lastLat = new BigDecimal(lastRecord.getLatitude());
+        BigDecimal lastLng = new BigDecimal(lastRecord.getLongitude());
+        BigDecimal tolerance = new BigDecimal("0.0001");
+        BigDecimal dLat = newLat.subtract(lastLat).abs();
+        BigDecimal dLng = newLng.subtract(lastLng).abs();
+
+        try {
+            return dLat.compareTo(tolerance) >= 0 || dLng.compareTo(tolerance) >= 0;
+        } catch (Exception e) {
+            LOGGER.error("error when compare lat and lng: ", e);
+            return false;
         }
     }
 
