@@ -20,4 +20,6 @@ import java.util.List;
 @Mapper
 public interface GpsRecordMapper extends BaseMapper<GpsRecord> {
     List<GpsRecord> selectByCarAndPeriod(@Param("carNumber") String carNumber, @Param("start") String start, @Param("end") String end);
+
+    List<GpsRecord> selectLatest();
 }

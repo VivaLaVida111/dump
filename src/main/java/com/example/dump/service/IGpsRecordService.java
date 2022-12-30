@@ -16,4 +16,9 @@ import java.util.List;
  */
 public interface IGpsRecordService extends IService<GpsRecord> {
     List<GpsRecord> selectByCarAndPeriod(String carNumber, String start, String end);
+
+    /**
+     查询全部车辆最新位置
+     */
+    List<GpsRecord> selectLatest();
 }

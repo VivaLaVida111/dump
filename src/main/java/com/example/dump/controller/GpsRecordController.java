@@ -46,5 +46,14 @@ public class GpsRecordController {
         responseData.setData(res);
         return responseData;
     }
+
+    @ApiOperation(value = "查询全部车辆最新位置")
+    @GetMapping("/latest_location/all")
+    public ResponseData<List<GpsRecord>> selectLatest() {
+        List<GpsRecord> res = gpsRecordService.selectLatest();
+        ResponseData<List<GpsRecord>> responseData = new ResponseData<>(ResultEnum.SUCCESS);
+        responseData.setData(res);
+        return responseData;
+    }
 }
 

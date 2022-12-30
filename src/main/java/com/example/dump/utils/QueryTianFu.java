@@ -33,6 +33,53 @@ public class QueryTianFu {
         return token;
     }
 
+    public static List<GpsRecord> getLatestGPS(List<String> carNumbers) {
+        List<GpsRecord> res = new ArrayList<>();
+        if (carNumbers != null) {
+            String vehicle = "";
+            for (int i = 0; i < carNumbers.size(); i++) {
+                vehicle += String.format("\"%s\"", carNumbers.get(i));
+                if (i < carNumbers.size() - 1) {
+                    vehicle += ",";
+                }
+            }
+
+            try {
+                String content = String.format("{\n\"Temp_Token\":\"%s\",\n\"Vehicle\":[%s]\n}\n", getToken(), vehicle);
+                OkHttpClient client = new OkHttpClient().newBuilder()
+                        .build();
+                MediaType mediaType = MediaType.parse("application/json");
+                RequestBody body = RequestBody.create(content, mediaType);
+                Request request = new Request.Builder()
+                        .url("https://chelian.gpskk.com/Data/GZIP/GetLastGPS")
+                        .method("POST", body)
+                        .addHeader("Content-Type", "application/json")
+                        .build();
+                Response response = client.newCall(request).execute();
+                JSONObject jo = JSON.parseObject(response.body().string());
+                JSONArray array = jo.getJSONArray("GpsPack");
+                if (array == null) {
+                    LOGGER.error("content of http GetLastGPS response: {}", jo);
+                } else {
+                    for (int i = 0; i < array.size(); i++) {
+                        Object item = array.get(i);
+                        if (item instanceof JSONObject) {
+                            JSONObject gpsPack = (JSONObject) item;
+                            JSONObject record = gpsPack.getJSONObject("PACK");
+                            GpsRecord gpsRecord = parseRecord(record);
+                            String carNumber = (String) gpsPack.get("Vehicle");
+                            gpsRecord.setCarNumber(carNumber);
+                            res.add(gpsRecord);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                LOGGER.error("error when query the last GPS: ", e);
+            }
+        }
+        return res;
+    }
+
     public static List<GpsRecord> getGPSTrack(String carNumber, String start, String end) {
         try {
             String content = String.format("{\n\"Temp_Token\":\"%s\",\n\"Vehicle\":\"%s\",\n\"From\":\"%s\",\n\"To\":\"%s\"\n}\n", getToken(), carNumber, start, end);
@@ -134,34 +181,7 @@ public class QueryTianFu {
                 Object item = array.get(i);
                 if (item instanceof JSONObject) {
                     JSONObject record = (JSONObject) item;
-                    GpsRecord gpsRecord = new GpsRecord();
-                    Integer loclat = (Integer) record.get("loclatitude");
-                    BigDecimal lat = BigDecimal.valueOf(loclat).divide(BigDecimal.valueOf(3600000), 6, RoundingMode.HALF_UP);
-                    Integer locLng = (Integer) record.get("loclongitude");
-                    BigDecimal lng = BigDecimal.valueOf(locLng).divide(BigDecimal.valueOf(3600000), 6, RoundingMode.HALF_UP);
-                    gpsRecord.setLatitude(lat.toString());
-                    gpsRecord.setLongitude(lng.toString());
-
-                    // 处理时间戳，返回的时间戳太阴间！
-                    JSONArray timestamp = record.getJSONArray("gpstm");
-                    String year = String.format("20%s", timestamp.get(0));
-                    String month = timestamp.get(1).toString();
-                    month = month.length() < 2? "0" + month : month;
-                    String day = timestamp.get(2).toString();
-                    day = day.length() < 2? "0" + day : day;
-                    String hour = timestamp.get(3).toString();
-                    hour = hour.length() < 2? "0" + hour : hour;
-                    String min = timestamp.get(4).toString();
-                    min = min.length() < 2? "0" + min : min;
-                    String sec = timestamp.get(5).toString();
-                    sec = sec.length() < 2? "0" + sec : sec;
-                    String date = String.format("%s-%s-%s %s:%s:%s", year, month, day, hour, min, sec);
-
-                    DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                    LocalDateTime exactDate = LocalDateTime.parse(date, df);
-                    LocalDateTime days = LocalDateTime.parse(date.substring(0, 10) + " 00:00:00", df);
-                    gpsRecord.setDay(days);
-                    gpsRecord.setExactDate(exactDate);
+                    GpsRecord gpsRecord = parseRecord(record);
 
                     gpsRecord.setCarNumber(carNumber);
                     if (i == 0 || locChanged(res.get(res.size() - 1), gpsRecord)) {
@@ -174,6 +194,38 @@ public class QueryTianFu {
             LOGGER.error("error: carNumber: {}, start: {}, end: {}, token: {}, cookie: {}", carNumber, start, end, token, cookie, e);
             return null;
         }
+    }
+
+    private static GpsRecord parseRecord(JSONObject record) {
+        GpsRecord gpsRecord = new GpsRecord();
+        Integer loclat = (Integer) record.get("loclatitude");
+        BigDecimal lat = BigDecimal.valueOf(loclat).divide(BigDecimal.valueOf(3600000), 6, RoundingMode.HALF_UP);
+        Integer locLng = (Integer) record.get("loclongitude");
+        BigDecimal lng = BigDecimal.valueOf(locLng).divide(BigDecimal.valueOf(3600000), 6, RoundingMode.HALF_UP);
+        gpsRecord.setLatitude(lat.toString());
+        gpsRecord.setLongitude(lng.toString());
+
+        // 处理时间戳，返回的时间戳太阴间！
+        JSONArray timestamp = record.getJSONArray("gpstm");
+        String year = String.format("20%s", timestamp.get(0));
+        String month = timestamp.get(1).toString();
+        month = month.length() < 2? "0" + month : month;
+        String day = timestamp.get(2).toString();
+        day = day.length() < 2? "0" + day : day;
+        String hour = timestamp.get(3).toString();
+        hour = hour.length() < 2? "0" + hour : hour;
+        String min = timestamp.get(4).toString();
+        min = min.length() < 2? "0" + min : min;
+        String sec = timestamp.get(5).toString();
+        sec = sec.length() < 2? "0" + sec : sec;
+        String date = String.format("%s-%s-%s %s:%s:%s", year, month, day, hour, min, sec);
+
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime exactDate = LocalDateTime.parse(date, df);
+        LocalDateTime days = LocalDateTime.parse(date.substring(0, 10) + " 00:00:00", df);
+        gpsRecord.setDay(days);
+        gpsRecord.setExactDate(exactDate);
+        return gpsRecord;
     }
 
     private static Boolean locChanged(GpsRecord lastRecord, GpsRecord newRecord) {
@@ -190,6 +242,16 @@ public class QueryTianFu {
         } catch (Exception e) {
             LOGGER.error("error when compare lat and lng: ", e);
             return false;
+        }
+    }
+
+    public static void main(String[] args) {
+        List<String> cars = new ArrayList<>();
+        cars.add("川ADK8628");
+        cars.add("川AEK569");
+        List<GpsRecord> res = getLatestGPS(cars);
+        for (GpsRecord record : res) {
+            System.out.println(record.getCarNumber());
         }
     }
 

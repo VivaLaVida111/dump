@@ -4,4 +4,11 @@
     <select id="selectByCarAndPeriod" resultType="com.example.dump.entity.GpsRecord">
         SELECT * FROM gps_record WHERE car_number = #{carNumber} and exact_date BETWEEN #{start} AND #{end}
     </select>
+
+    <select id="selectLatest" resultType="com.example.dump.entity.GpsRecord">
+        select t1.* from gps_record t1
+                             inner join (
+            select car_number, MAX(exact_date) as maxdate from gps_record group by car_number
+        ) t2 on t1.exact_date = t2.maxdate and t1.car_number = t2.car_number
+    </select>
 </mapper>
