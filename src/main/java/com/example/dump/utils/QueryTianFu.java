@@ -23,13 +23,10 @@ public class QueryTianFu {
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryTianFu.class);
 
     public static String getToken() {
-        /*
         if (!isValidToken()) {
             refreshToken();
         }
-         */
-        // 持有同一token去请求相同数据多次，可能存在之后不返回数据的情况
-        refreshToken();
+
         return token;
     }
 
@@ -246,6 +243,7 @@ public class QueryTianFu {
     }
 
     public static void main(String[] args) {
+        /*
         List<String> cars = new ArrayList<>();
         cars.add("川ADK8628");
         cars.add("川AEK569");
@@ -253,6 +251,8 @@ public class QueryTianFu {
         for (GpsRecord record : res) {
             System.out.println(record.getCarNumber());
         }
+         */
+        refreshToken();
     }
 
 }
