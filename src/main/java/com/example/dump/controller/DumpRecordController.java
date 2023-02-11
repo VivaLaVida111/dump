@@ -2,7 +2,9 @@ package com.example.dump.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.dump.entity.DumpDataOfCar;
 import com.example.dump.entity.DumpRecord;
 import com.example.dump.service.IDumpRecordService;
 import io.swagger.annotations.Api;
@@ -67,6 +69,15 @@ public class DumpRecordController {
         QueryWrapper<DumpRecord> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc("id");
         return dumpRecordService.page(new Page<>(pageNum, pageSize));
+    }
+
+    @ApiOperation(value = "车辆倾倒数据查询;若需全部站点数据,则site_name填all")
+    @GetMapping("/dump_car/{start}/{end}/{site_name}/{pageNum}/{pageSize}")
+    public IPage<DumpDataOfCar> dumpDataOfCar(@PathVariable String start, @PathVariable String end,
+                                              @PathVariable String site_name,
+                                              @PathVariable Integer pageNum, @PathVariable Integer pageSize) {
+        IPage<DumpDataOfCar> res = dumpRecordService.dumpDataOfCar(new Page<>(pageNum, pageSize), start, end, site_name);
+        return res;
     }
 }
 

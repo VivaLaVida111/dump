@@ -1,9 +1,12 @@
 package com.example.dump.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dump.entity.DumpRecord;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import com.example.dump.entity.DumpDataOfCar;
 
 import java.util.List;
 
@@ -20,4 +23,6 @@ public interface DumpRecordMapper extends BaseMapper<DumpRecord> {
     List<DumpRecord> selectByPeriod(@Param("start") String start, @Param("end") String end);
 
     List<DumpRecord> selectBySiteName(@Param("site_name") String site_name);
+
+    IPage<DumpDataOfCar> dumpDataOfCar(Page<DumpDataOfCar> page, @Param("start") String start, @Param("end") String end, @Param("site_name") String site_name);
 }

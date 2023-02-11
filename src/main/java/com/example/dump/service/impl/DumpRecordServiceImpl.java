@@ -1,7 +1,9 @@
 package com.example.dump.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.dump.entity.DumpDataOfCar;
 import com.example.dump.entity.DumpRecord;
 import com.example.dump.mapper.DumpRecordMapper;
 import com.example.dump.service.IDumpRecordService;
@@ -55,5 +57,10 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
         QueryWrapper<DumpRecord> wrapper = new QueryWrapper<>();
         wrapper.eq("site_name", site_name);
         return dumpRecordMapper.selectList(wrapper);
+    }
+
+    @Override
+    public IPage<DumpDataOfCar> dumpDataOfCar(Page<DumpDataOfCar> page, String start, String end, String site_name) {
+        return dumpRecordMapper.dumpDataOfCar(page, start, end, site_name);
     }
 }
