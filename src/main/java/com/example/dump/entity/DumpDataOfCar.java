@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Setter
 public class DumpDataOfCar implements Serializable {
     private static final long serialVersionUID = 1L;
-    private LocalDateTime day;
     private String siteName;
     private String carNumber;
     private Integer frequency;

@@ -11,12 +11,12 @@
     </select>
 
     <select id="dumpDataOfCar" resultType="com.example.dump.entity.DumpDataOfCar">
-        SELECT `day`, site_name as siteName, car_number as carNumber, sum(1) as frequency, sum(net_weight) as totalWeight, AVG(net_weight) as avgWeight
+        SELECT site_name as siteName, car_number as carNumber, sum(1) as frequency, sum(net_weight) as totalWeight, AVG(net_weight) as avgWeight
         from dump_record
         WHERE `day` between #{start} and #{end}
         <if test="site_name != null and site_name != 'all'">
           and site_name = #{site_name}
         </if>
-        group by `day`, site_name, car_number
+        group by site_name, car_number
     </select>
 </mapper>
