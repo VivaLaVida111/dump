@@ -252,7 +252,7 @@ public class QueryTianFu {
             System.out.println(record.getCarNumber());
         }
          */
-        refreshToken();
+        getGPSTrack("川AX1791", "2023-02-08 12:00:00", "2023-02-13 14:00:00");
     }
 
 }

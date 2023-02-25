@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import com.example.dump.entity.DumpDataOfCar;
 
+import java.awt.print.PrinterGraphics;
 import java.util.List;
 
 /**
@@ -25,4 +26,7 @@ public interface DumpRecordMapper extends BaseMapper<DumpRecord> {
     List<DumpRecord> selectBySiteName(@Param("site_name") String site_name);
 
     IPage<DumpDataOfCar> dumpDataOfCar(Page<DumpDataOfCar> page, @Param("start") String start, @Param("end") String end, @Param("site_name") String site_name);
+
+    Integer pastDumpAmountOfCar(@Param("site_name") String site_name, @Param("car_number") String car_number, @Param("start") String start, @Param("end") String end);
+    Integer todayDumpAmountOfCar(@Param("site_name") String site_name, @Param("car_number") String car_number, @Param("start") String start, @Param("end") String end);
 }

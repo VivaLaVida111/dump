@@ -19,4 +19,19 @@
         </if>
         group by site_name, car_number
     </select>
+
+    <select id="pastDumpAmountOfCar" resultType="java.lang.Integer">
+        SELECT SUM(net_weight)
+        from dump_record dr
+        WHERE site_name = #{site_name} and car_number = #{car_number}
+          and `day` BETWEEN  DATE_SUB(CURDATE(), INTERVAL 7 day) and DATE_SUB(CURDATE(), INTERVAL 1 day)
+          and TIME(exact_date) BETWEEN #{start} and #{end}
+        GROUP by car_number
+    </select>
+
+    <select id="todayDumpAmountOfCar" resultType="java.lang.Integer">
+        SELECT SUM(net_weight)  from  dump_record dr
+        WHERE site_name = #{site_name} and car_number = #{car_number} and exact_date BETWEEN #{start} and #{end}
+        GROUP by car_number
+    </select>
 </mapper>

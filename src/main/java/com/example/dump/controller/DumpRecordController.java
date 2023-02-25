@@ -4,6 +4,7 @@ package com.example.dump.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.dump.entity.CarData;
 import com.example.dump.entity.DumpDataOfCar;
 import com.example.dump.entity.DumpRecord;
 import com.example.dump.service.IDumpRecordService;
@@ -11,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -78,6 +80,18 @@ public class DumpRecordController {
                                               @PathVariable Integer pageNum, @PathVariable Integer pageSize) {
         IPage<DumpDataOfCar> res = dumpRecordService.dumpDataOfCar(new Page<>(pageNum, pageSize), start, end, site_name);
         return res;
+    }
+
+    @ApiOperation(value = "查询指定车辆当日起止时间垃圾总量以及预测值，start以及end只需时间不要日期")
+    @GetMapping("/car_data/{site_name}/{car_number}/{start}/{end}")
+    public CarData carData(@PathVariable String site_name, @PathVariable String car_number, @PathVariable String start, @PathVariable String end) {
+        CarData carData = new CarData();
+        carData.setCarNumber(car_number);
+        carData.setSiteName(site_name);
+        Integer pastAmount = dumpRecordService.pastDumpAmountOfCar(site_name, car_number, start, end);
+        carData.setPredictAmount(pastAmount == null? null : pastAmount / 7);
+        carData.setTodayAmount(dumpRecordService.todayDumpAmountOfCar(site_name, car_number, start, end));
+        return carData;
     }
 }
 

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dump.entity.DumpDataOfCar;
 import com.example.dump.entity.DumpRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -26,4 +27,8 @@ public interface IDumpRecordService extends IService<DumpRecord> {
     List<DumpRecord> test(String site_name);
 
     IPage<DumpDataOfCar> dumpDataOfCar(Page<DumpDataOfCar> page, String start, String end, String site_name);
+
+    Integer pastDumpAmountOfCar(String site_name, String car_number, String start, String end);
+
+    Integer todayDumpAmountOfCar(String site_name, String car_number, String start, String end);
 }

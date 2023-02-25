@@ -11,6 +11,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -62,5 +64,19 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
     @Override
     public IPage<DumpDataOfCar> dumpDataOfCar(Page<DumpDataOfCar> page, String start, String end, String site_name) {
         return dumpRecordMapper.dumpDataOfCar(page, start, end, site_name);
+    }
+
+    @Override
+    public Integer pastDumpAmountOfCar(String site_name, String car_number, String start, String end) {
+        return dumpRecordMapper.pastDumpAmountOfCar(site_name, car_number, start, end);
+    }
+
+    @Override
+    public Integer todayDumpAmountOfCar(String site_name, String car_number, String start, String end) {
+        LocalDate date = LocalDate.now();
+        String now = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        start = now + " " + start;
+        end = now + " " + end;
+        return dumpRecordMapper.todayDumpAmountOfCar(site_name, car_number, start, end);
     }
 }
