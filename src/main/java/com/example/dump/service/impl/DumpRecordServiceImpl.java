@@ -3,6 +3,7 @@ package com.example.dump.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.dump.entity.CarData;
 import com.example.dump.entity.DumpDataOfCar;
 import com.example.dump.entity.DumpRecord;
 import com.example.dump.mapper.DumpRecordMapper;
@@ -78,5 +79,14 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
         start = now + " " + start;
         end = now + " " + end;
         return dumpRecordMapper.todayDumpAmountOfCar(site_name, car_number, start, end);
+    }
+
+    @Override
+    public IPage<CarData> carDumpAmountOfAllSite(Page<DumpDataOfCar> page, String timeStart, String timeEnd) {
+        LocalDate date = LocalDate.now();
+        String now = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String dateTimeStart = now + " " + timeStart;
+        String dateTimeEnd = now + " " + timeEnd;
+        return dumpRecordMapper.carDumpAmountOfAllSite(page, timeStart, timeEnd, dateTimeStart, dateTimeEnd);
     }
 }

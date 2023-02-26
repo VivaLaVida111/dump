@@ -93,5 +93,12 @@ public class DumpRecordController {
         carData.setTodayAmount(dumpRecordService.todayDumpAmountOfCar(site_name, car_number, start, end));
         return carData;
     }
+
+    @ApiOperation(value = "查询全站当日起止时间垃圾总量以及预测值，start以及end只需时间不要日期")
+    @GetMapping("/car_data/all_site/{start}/{end}/{pageNum}/{pageSize}")
+    public IPage<CarData> carDumpAmountOfAllSite(@PathVariable String start, @PathVariable String end, @PathVariable Integer pageNum, @PathVariable Integer pageSize) {
+        IPage<CarData> res = dumpRecordService.carDumpAmountOfAllSite(new Page<>(pageNum, pageSize), start, end);
+        return res;
+    }
 }
 

@@ -2,6 +2,7 @@ package com.example.dump.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.dump.entity.CarData;
 import com.example.dump.entity.DumpRecord;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -29,4 +30,6 @@ public interface DumpRecordMapper extends BaseMapper<DumpRecord> {
 
     Integer pastDumpAmountOfCar(@Param("site_name") String site_name, @Param("car_number") String car_number, @Param("start") String start, @Param("end") String end);
     Integer todayDumpAmountOfCar(@Param("site_name") String site_name, @Param("car_number") String car_number, @Param("start") String start, @Param("end") String end);
+
+    IPage<CarData> carDumpAmountOfAllSite(Page<DumpDataOfCar> page, @Param("timeStart") String timeStart, @Param("timeEnd") String timeEnd, @Param("dateTimeStart") String dateTimeStart, @Param("dateTimeEnd") String dateTimeEnd);
 }

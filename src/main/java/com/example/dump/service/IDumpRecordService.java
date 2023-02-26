@@ -2,6 +2,7 @@ package com.example.dump.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.dump.entity.CarData;
 import com.example.dump.entity.DumpDataOfCar;
 import com.example.dump.entity.DumpRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -31,4 +32,7 @@ public interface IDumpRecordService extends IService<DumpRecord> {
     Integer pastDumpAmountOfCar(String site_name, String car_number, String start, String end);
 
     Integer todayDumpAmountOfCar(String site_name, String car_number, String start, String end);
+
+    IPage<CarData> carDumpAmountOfAllSite(Page<DumpDataOfCar> page, String timeStart, String timeEnd);
+
 }
