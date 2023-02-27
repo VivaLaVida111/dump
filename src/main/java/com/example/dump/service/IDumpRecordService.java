@@ -35,4 +35,5 @@ public interface IDumpRecordService extends IService<DumpRecord> {
 
     IPage<CarData> carDumpAmountOfAllSite(Page<DumpDataOfCar> page, String timeStart, String timeEnd);
 
+    List<CarData> carDumpAmount(String car_number, String timeStart, String timeEnd);
 }

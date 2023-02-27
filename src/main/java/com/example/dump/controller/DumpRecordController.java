@@ -82,6 +82,7 @@ public class DumpRecordController {
         return res;
     }
 
+    /*
     @ApiOperation(value = "查询指定车辆当日起止时间垃圾总量以及预测值，start以及end只需时间不要日期")
     @GetMapping("/car_data/{site_name}/{car_number}/{start}/{end}")
     public CarData carData(@PathVariable String site_name, @PathVariable String car_number, @PathVariable String start, @PathVariable String end) {
@@ -92,6 +93,12 @@ public class DumpRecordController {
         carData.setPredictAmount(pastAmount == null? null : pastAmount / 7);
         carData.setTodayAmount(dumpRecordService.todayDumpAmountOfCar(site_name, car_number, start, end));
         return carData;
+    }
+     */
+    @ApiOperation(value = "查询指定车辆当日起止时间垃圾总量以及预测值，start以及end只需时间不要日期")
+    @GetMapping("/car_data/{car_number}/{start}/{end}")
+    public List<CarData> carDumpAmount(@PathVariable String car_number, @PathVariable String start, @PathVariable String end) {
+        return dumpRecordService.carDumpAmount(car_number, start, end);
     }
 
     @ApiOperation(value = "查询全站当日起止时间垃圾总量以及预测值，start以及end只需时间不要日期")

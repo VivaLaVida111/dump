@@ -44,10 +44,30 @@
                   and TIME(exact_date) BETWEEN #{timeStart} and #{timeEnd}
                 group by site_name, car_number
             ) a
-            JOIN
+            LEFT JOIN
             (
                 SELECT SUM(net_weight) as todayAmount, site_name as siteName, car_number as carNumber  from  dump_record dr
                 WHERE exact_date BETWEEN #{dateTimeStart} and #{dateTimeEnd}
+                GROUP by site_name, car_number
+            ) b
+        on a.siteName = b.siteName and a.carNumber = b.carNumber
+    </select>
+
+    <select id="carDumpAmount" resultType="com.example.dump.entity.CarData">
+        select predictAmount, a.siteName, a.carNumber, todayAmount
+        from
+            (
+                SELECT SUM(net_weight) DIV 7 as predictAmount, site_name as siteName, car_number as carNumber from dump_record dr
+                WHERE car_number = #{car_number}
+                    and `day` BETWEEN  DATE_SUB(CURDATE(), INTERVAL 7 day) and DATE_SUB(CURDATE(), INTERVAL 1 day)
+                    and TIME(exact_date) BETWEEN #{timeStart} and #{timeEnd}
+                group by site_name, car_number
+            ) a
+            LEFT JOIN
+            (
+                SELECT SUM(net_weight) as todayAmount, site_name as siteName, car_number as carNumber  from  dump_record dr
+                WHERE car_number = #{car_number}
+                    and exact_date BETWEEN #{dateTimeStart} and #{dateTimeEnd}
                 GROUP by site_name, car_number
             ) b
         on a.siteName = b.siteName and a.carNumber = b.carNumber

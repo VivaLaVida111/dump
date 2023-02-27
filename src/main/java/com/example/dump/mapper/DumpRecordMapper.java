@@ -32,4 +32,6 @@ public interface DumpRecordMapper extends BaseMapper<DumpRecord> {
     Integer todayDumpAmountOfCar(@Param("site_name") String site_name, @Param("car_number") String car_number, @Param("start") String start, @Param("end") String end);
 
     IPage<CarData> carDumpAmountOfAllSite(Page<DumpDataOfCar> page, @Param("timeStart") String timeStart, @Param("timeEnd") String timeEnd, @Param("dateTimeStart") String dateTimeStart, @Param("dateTimeEnd") String dateTimeEnd);
+
+    List<CarData> carDumpAmount(@Param("car_number") String car_number, @Param("timeStart") String timeStart, @Param("timeEnd") String timeEnd, @Param("dateTimeStart") String dateTimeStart, @Param("dateTimeEnd") String dateTimeEnd);
 }

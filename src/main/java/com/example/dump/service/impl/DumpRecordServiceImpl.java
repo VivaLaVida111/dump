@@ -89,4 +89,13 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
         String dateTimeEnd = now + " " + timeEnd;
         return dumpRecordMapper.carDumpAmountOfAllSite(page, timeStart, timeEnd, dateTimeStart, dateTimeEnd);
     }
+
+    @Override
+    public List<CarData> carDumpAmount(String car_number, String timeStart, String timeEnd) {
+        LocalDate date = LocalDate.now();
+        String now = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String dateTimeStart = now + " " + timeStart;
+        String dateTimeEnd = now + " " + timeEnd;
+        return dumpRecordMapper.carDumpAmount(car_number, timeStart, timeEnd, dateTimeStart, dateTimeEnd);
+    }
 }
