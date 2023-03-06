@@ -1,21 +1,26 @@
 package com.example.dump.controller;
 
 
+import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.URLUtil;
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dump.entity.CarData;
 import com.example.dump.entity.DumpDataOfCar;
+import com.example.dump.entity.DumpDataOfSite;
 import com.example.dump.entity.DumpRecord;
 import com.example.dump.service.IDumpRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -106,6 +111,28 @@ public class DumpRecordController {
     public IPage<CarData> carDumpAmountOfAllSite(@PathVariable String start, @PathVariable String end, @PathVariable Integer pageNum, @PathVariable Integer pageSize) {
         IPage<CarData> res = dumpRecordService.carDumpAmountOfAllSite(new Page<>(pageNum, pageSize), start, end);
         return res;
+    }
+
+    @ApiOperation(value = "站点每日垃圾量查询;若需全部站点数据,则site_name填all")
+    @GetMapping("/site_data_day/{start}/{end}/{site_name}")
+    public void dumpDataOfSite(HttpServletResponse response, @PathVariable String start, @PathVariable String end,
+                               @PathVariable String site_name) throws IOException {
+        List<DumpDataOfSite> data = dumpRecordService.dumpDataOfSite(start, end, site_name);
+        // 设置文本内省
+        response.setContentType("application/vnd.ms-excel");
+        // 设置字符编码
+        response.setCharacterEncoding("utf-8");
+        // 设置响应头
+        if ("all".equals(site_name)) {
+            site_name = "金牛区";
+        }
+        String name = site_name + start + "至" + end + "垃圾总量统计" + ".xlsx";
+        String encodedFileName = URLUtil.encode(name, CharsetUtil.CHARSET_UTF_8);
+        response.setHeader("Content-disposition",  "attachment;filename="+encodedFileName);
+        //System.out.println(encodedFileName);
+        //System.out.println(URLUtil.decode(encodedFileName, CharsetUtil.CHARSET_UTF_8));
+
+        EasyExcel.write(response.getOutputStream(), DumpDataOfSite.class).sheet(name).doWrite(data);
     }
 }
 

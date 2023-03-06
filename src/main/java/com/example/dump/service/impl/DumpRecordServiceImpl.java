@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dump.entity.CarData;
 import com.example.dump.entity.DumpDataOfCar;
+import com.example.dump.entity.DumpDataOfSite;
 import com.example.dump.entity.DumpRecord;
 import com.example.dump.mapper.DumpRecordMapper;
 import com.example.dump.service.IDumpRecordService;
@@ -97,5 +98,10 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
         String dateTimeStart = now + " " + timeStart;
         String dateTimeEnd = now + " " + timeEnd;
         return dumpRecordMapper.carDumpAmount(car_number, timeStart, timeEnd, dateTimeStart, dateTimeEnd);
+    }
+
+    @Override
+    public List<DumpDataOfSite> dumpDataOfSite(String start, String end, String site_name) {
+        return dumpRecordMapper.dumpDataOfSite(start, end, site_name);
     }
 }

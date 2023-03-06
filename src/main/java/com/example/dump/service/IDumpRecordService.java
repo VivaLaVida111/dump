@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.dump.entity.CarData;
 import com.example.dump.entity.DumpDataOfCar;
+import com.example.dump.entity.DumpDataOfSite;
 import com.example.dump.entity.DumpRecord;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
@@ -36,4 +37,6 @@ public interface IDumpRecordService extends IService<DumpRecord> {
     IPage<CarData> carDumpAmountOfAllSite(Page<DumpDataOfCar> page, String timeStart, String timeEnd);
 
     List<CarData> carDumpAmount(String car_number, String timeStart, String timeEnd);
+
+    List<DumpDataOfSite> dumpDataOfSite(String start, String end, String site_name);
 }

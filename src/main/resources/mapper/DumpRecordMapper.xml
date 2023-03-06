@@ -72,4 +72,13 @@
             ) b
         on a.siteName = b.siteName and a.carNumber = b.carNumber
     </select>
+
+    <select id="dumpDataOfSite" resultType="com.example.dump.entity.DumpDataOfSite">
+        SELECT site_name as siteName, date(`day`) as `day`, SUM(net_weight) as weight  from dump_record dr
+        WHERE `day` between #{start} and #{end}
+        <if test="site_name != null and site_name != 'all'">
+            and site_name = #{site_name}
+        </if>
+        group by site_name, `day`
+    </select>
 </mapper>
