@@ -81,4 +81,25 @@
         </if>
         group by site_name, `day`
     </select>
+
+    <select id="checkStatus" resultType="com.example.dump.entity.DBStatus">
+        select a.site_name as siteName, a.predict, b.actual
+        from
+            (
+                SELECT  COUNT(1) div 7 as predict, site_name
+                from dump_record dr
+                WHERE `day` BETWEEN DATE_SUB(CURDATE(), INTERVAL 7 day) and DATE_SUB(CURDATE(), INTERVAL 1 day)
+                and TIME(exact_date) BETWEEN DATE_SUB(CURTIME(), INTERVAL 1 HOUR) and CURTIME()
+                group by site_name
+            ) a
+            LEFT JOIN
+            (
+                SELECT  COUNT(1) as actual, site_name
+                from dump_record dr
+                WHERE  `day` = CURDATE()
+                and TIME(exact_date) BETWEEN DATE_SUB(CURTIME(), INTERVAL 1 HOUR) and CURTIME()
+                group by site_name
+            ) b
+        on a.site_name = b.site_name
+    </select>
 </mapper>

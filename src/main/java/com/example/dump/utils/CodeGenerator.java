@@ -23,7 +23,7 @@ public class CodeGenerator {
                 .globalConfig(builder -> {
                     builder.author("luo") // 设置作者
                             .enableSwagger() // 开启 swagger 模式
-//                            .fileOverride() // 覆盖已生成文件
+                            .fileOverride() // 覆盖已生成文件
                             .outputDir(proj_dir + "/src/main/java/"); // 指定输出目录
                 })
                 .packageConfig(builder -> {
@@ -36,7 +36,7 @@ public class CodeGenerator {
                     builder.mapperBuilder().enableMapperAnnotation();//为mapper添加@Mapper注解
                     builder.controllerBuilder().enableHyphenStyle()//开启驼峰转连字符
                             .enableRestStyle();//为Controller添加@RestController注解
-                    builder.addInclude("car_by_site") // 设置需要生成的表名
+                    builder.addInclude("offline_record") // 设置需要生成的表名
                             .addTablePrefix("t_", "c_"); // 设置过滤表前缀
                 })
 //                .templateEngine(new FreemarkerTemplateEngine()) // 使用Freemarker引擎模板，默认的是Velocity引擎模板

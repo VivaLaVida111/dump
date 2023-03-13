@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -133,6 +134,12 @@ public class DumpRecordController {
         //System.out.println(URLUtil.decode(encodedFileName, CharsetUtil.CHARSET_UTF_8));
 
         EasyExcel.write(response.getOutputStream(), DumpDataOfSite.class).sheet(name).doWrite(data);
+    }
+
+    @ApiOperation(value = "检查各站点是否掉线")
+    @GetMapping("/check_status")
+    public Map<String, String> checkStatus() {
+        return dumpRecordService.checkStatus();
     }
 }
 

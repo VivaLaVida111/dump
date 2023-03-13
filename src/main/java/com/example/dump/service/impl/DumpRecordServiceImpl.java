@@ -3,19 +3,20 @@ package com.example.dump.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.dump.entity.CarData;
-import com.example.dump.entity.DumpDataOfCar;
-import com.example.dump.entity.DumpDataOfSite;
-import com.example.dump.entity.DumpRecord;
+import com.example.dump.entity.*;
 import com.example.dump.mapper.DumpRecordMapper;
+import com.example.dump.mapper.OfflineRecordMapper;
 import com.example.dump.service.IDumpRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -31,7 +32,8 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
     @Resource
     DumpRecordMapper dumpRecordMapper;
 
-
+    @Resource
+    OfflineRecordMapper offlineRecordMapper;
 
     @Override
     public List<DumpRecord> selectByPeriod(String start, String end) {
@@ -103,5 +105,24 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
     @Override
     public List<DumpDataOfSite> dumpDataOfSite(String start, String end, String site_name) {
         return dumpRecordMapper.dumpDataOfSite(start, end, site_name);
+    }
+
+    @Override
+    public Map<String, String> checkStatus() {
+        List<DBStatus> list = dumpRecordMapper.checkStatus();
+        Map<String, String> res = new HashMap<>();
+        for (DBStatus item : list) {
+            if (item.getPredict() >= 1 && (item.getActual() == null || item.getActual() == 0)) {
+                LocalDateTime now = LocalDateTime.now();
+                String info = now + " 超过1小时未有进站数据，请确认数据库是否掉线";
+                res.put(item.getSiteName(), info);
+                OfflineRecord record = new OfflineRecord();
+                record.setExactDate(now);
+                record.setTimeInterval("1 hour");
+                record.setSiteName(item.getSiteName());
+                offlineRecordMapper.insert(record);
+            }
+        }
+        return res;
     }
 }
