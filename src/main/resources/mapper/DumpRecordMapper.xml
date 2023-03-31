@@ -17,6 +17,9 @@
         <if test="site_name != null and site_name != 'all'">
           and site_name = #{site_name}
         </if>
+        <if test="site_name == null or site_name == 'all'">
+            and (site_name = '红星' or site_name = '西华')
+        </if>
         group by site_name, car_number
     </select>
 
@@ -86,7 +89,7 @@
         select a.site_name as siteName, a.predict, b.actual
         from
             (
-                SELECT  COUNT(1) div 7 as predict, site_name
+                SELECT  SUM(net_weight) div 7 as predict, site_name
                 from dump_record dr
                 WHERE `day` BETWEEN DATE_SUB(CURDATE(), INTERVAL 7 day) and DATE_SUB(CURDATE(), INTERVAL 1 day)
                 and TIME(exact_date) BETWEEN DATE_SUB(CURTIME(), INTERVAL 1 HOUR) and CURTIME()
@@ -94,7 +97,7 @@
             ) a
             LEFT JOIN
             (
-                SELECT  COUNT(1) as actual, site_name
+                SELECT  SUM(net_weight) as actual, site_name
                 from dump_record dr
                 WHERE  `day` = CURDATE()
                 and TIME(exact_date) BETWEEN DATE_SUB(CURTIME(), INTERVAL 1 HOUR) and CURTIME()
