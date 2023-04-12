@@ -124,8 +124,10 @@ public class DumpRecordController {
         // 设置字符编码
         response.setCharacterEncoding("utf-8");
         // 设置响应头
-        if ("all".equals(site_name)) {
-            site_name = "金牛区";
+        if ("big_stations".equals(site_name)) {
+            site_name = "大站";
+        } else if ("small_stations".equals(site_name)) {
+            site_name = "小站";
         }
         String name = site_name + start + "至" + end + "垃圾总量统计" + ".xlsx";
         String encodedFileName = URLUtil.encode(name, CharsetUtil.CHARSET_UTF_8);
@@ -136,10 +138,5 @@ public class DumpRecordController {
         EasyExcel.write(response.getOutputStream(), DumpDataOfSite.class).sheet(name).doWrite(data);
     }
 
-    @ApiOperation(value = "检查各站点是否掉线")
-    @GetMapping("/check_status")
-    public Map<String, String> checkStatus() {
-        return dumpRecordService.checkStatus();
-    }
 }
 

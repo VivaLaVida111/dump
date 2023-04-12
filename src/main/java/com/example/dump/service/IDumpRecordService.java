@@ -38,5 +38,5 @@ public interface IDumpRecordService extends IService<DumpRecord> {
 
     List<DumpDataOfSite> dumpDataOfSite(String start, String end, String site_name);
 
-    Map<String, String> checkStatus();
+    void checkDB(Map<String, String> res);
 }

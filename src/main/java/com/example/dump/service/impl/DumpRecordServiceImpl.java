@@ -7,7 +7,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.dump.entity.*;
 import com.example.dump.mapper.AlarmRecordMapper;
 import com.example.dump.mapper.DumpRecordMapper;
+import com.example.dump.service.IAlarmRecordService;
 import com.example.dump.service.IDumpRecordService;
+import com.example.dump.service.IGpsRecordService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -34,7 +36,10 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
     DumpRecordMapper dumpRecordMapper;
 
     @Resource
-    AlarmRecordMapper alarmRecordMapper;
+    IAlarmRecordService alarmRecordService;
+
+    @Resource
+    IGpsRecordService gpsRecordService;
 
     @Override
     public List<DumpRecord> selectByPeriod(String start, String end) {
@@ -109,9 +114,8 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
     }
 
     @Override
-    public Map<String, String> checkStatus() {
+    public void checkDB(Map<String, String> res) {
         List<DBStatus> list = dumpRecordMapper.checkStatus();
-        Map<String, String> res = new HashMap<>();
         for (DBStatus item : list) {
             if ((item.getPredict() != null && item.getPredict() > 0) && (item.getActual() == null || item.getActual() < item.getPredict() / 10)) {
                 LocalDateTime now = LocalDateTime.now();
@@ -122,29 +126,9 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
                 record.setTimeInterval("1 hour");
                 record.setName(item.getSiteName());
                 record.setCategory("DB_status");
-                insertByDeDuplication(record);
+                alarmRecordService.insertByDeDuplication(record);
             }
         }
-        return res;
     }
 
-    private void insertByDeDuplication(AlarmRecord record) {
-        QueryWrapper<AlarmRecord> wrapper = new QueryWrapper<AlarmRecord>();
-        wrapper.eq("name", record.getName());
-        wrapper.eq("category", record.getCategory());
-        wrapper.orderByDesc("exact_date");
-        wrapper.last("limit 1");
-        List<AlarmRecord> records = alarmRecordMapper.selectList(wrapper);
-        if (records != null ) {
-            for (AlarmRecord latest : records) {
-                Duration duration = Duration.between(latest.getExactDate(), record.getExactDate());
-                long hours = duration.toHours();
-
-                if (hours < 1) {
-                    return;
-                }
-            }
-        }
-        alarmRecordMapper.insert(record);
-    }
 }
