@@ -101,7 +101,7 @@
                 SELECT  SUM(net_weight) div 7 as predict, site_name
                 from dump_record dr
                 WHERE `day` BETWEEN DATE_SUB(CURDATE(), INTERVAL 7 day) and DATE_SUB(CURDATE(), INTERVAL 1 day)
-                and TIME(exact_date) BETWEEN DATE_SUB(CURTIME(), INTERVAL 1 HOUR) and CURTIME()
+                and TIME(exact_date) BETWEEN '00:00:00' and CURTIME()
                 group by site_name
             ) a
             LEFT JOIN
@@ -109,7 +109,7 @@
                 SELECT  SUM(net_weight) as actual, site_name
                 from dump_record dr
                 WHERE  `day` = CURDATE()
-                and TIME(exact_date) BETWEEN DATE_SUB(CURTIME(), INTERVAL 1 HOUR) and CURTIME()
+                and TIME(exact_date) BETWEEN '00:00:00' and CURTIME()
                 group by site_name
             ) b
         on a.site_name = b.site_name
