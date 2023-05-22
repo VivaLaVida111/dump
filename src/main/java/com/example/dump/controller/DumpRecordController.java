@@ -138,5 +138,11 @@ public class DumpRecordController {
         EasyExcel.write(response.getOutputStream(), DumpDataOfSite.class).sheet(name).doWrite(data);
     }
 
+    @ApiOperation(value = "站点每日垃圾量查询;只返回数组，不返回Excel")
+    @GetMapping("/site_data_day_array/{start}/{end}/{site_name}")
+    public List<DumpDataOfSite> dumpDataOfSiteArray(@PathVariable String start, @PathVariable String end,
+                                               @PathVariable String site_name) {
+        return dumpRecordService.dumpDataOfSite(start, end, site_name);
+    }
 }
 
