@@ -110,7 +110,16 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
 
     @Override
     public List<DumpDataOfSite> dumpDataOfSite(String start, String end, String site_name) {
-        return dumpRecordMapper.dumpDataOfSite(start, end, site_name);
+        List<DumpDataOfSite> res =  dumpRecordMapper.dumpDataOfSite(start, end, site_name);
+        DumpDataOfSite total = new DumpDataOfSite();
+        total.setSiteName("总计");
+        int count = 0;
+        for (DumpDataOfSite record : res) {
+            count += record.getWeight();
+        }
+        total.setWeight(count);
+        res.add(total);
+        return res;
     }
 
     @Override
