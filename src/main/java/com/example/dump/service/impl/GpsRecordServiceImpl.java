@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,8 @@ public class GpsRecordServiceImpl extends ServiceImpl<GpsRecordMapper, GpsRecord
     CarAllMapper carAllMapper;
     @Resource
     IAlarmRecordService alarmRecordService;
+
+    private Map<String, Boolean> carUsageMap = new HashMap<>();
 
     @Override
     public List<GpsRecord> selectByCarAndPeriod(String carNumber, String start, String end){
@@ -97,52 +100,86 @@ public class GpsRecordServiceImpl extends ServiceImpl<GpsRecordMapper, GpsRecord
 
     @Override
     public void checkCarUsage(Map<String, String> res) {
-        List<GpsRecord> records = selectLatest();
-        QueryWrapper<CarAll> wrapper = new QueryWrapper<>();
-        List<CarAll> carList = carAllMapper.selectList(wrapper);
-        int tianfu = 0;
-        int renhe = 0;
-        for (CarAll car : carList) {
-            if ("天府环境".equals(car.getCompany())) {
-                tianfu++;
-            } else {
-                renhe++;
-            }
-        }
-        int tianfuUse = 0;
-        int renheUse = 0;
-        for (GpsRecord record : records) {
-            if (record.getId() != null) {
-                renheUse++;
-            } else {
-                tianfuUse++;
-            }
-        }
+        LocalTime currentTime = LocalTime.now();
+        int hour = currentTime.getHour();
+        LocalTime startTime = LocalTime.of(10, 0);
+        LocalTime endTime = LocalTime.of(22, 0);
+        // 判断是否在10点至22点之间
+        if (currentTime.isAfter(startTime) && currentTime.isBefore(endTime)) {
+            if (!carUsageMap.containsKey("tianfu" + hour) || !carUsageMap.containsKey("renhe" + hour)
+                    || !carUsageMap.get("tianfu" + hour) || !carUsageMap.get("renhe" + hour)) {
+                List<GpsRecord> records = selectLatest();
+                QueryWrapper<CarAll> wrapper = new QueryWrapper<>();
+                List<CarAll> carList = carAllMapper.selectList(wrapper);
+                int tianfu = 0;
+                int renhe = 0;
+                for (CarAll car : carList) {
+                    if ("天府环境".equals(car.getCompany())) {
+                        tianfu++;
+                    } else {
+                        renhe++;
+                    }
+                }
+                int tianfuUse = 0;
+                int renheUse = 0;
+                for (GpsRecord record : records) {
+                    if (record.getId() != null) {
+                        renheUse++;
+                    } else {
+                        tianfuUse++;
+                    }
+                }
 
-        double f1 = new BigDecimal((float)tianfuUse/tianfu).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        if (f1 < 0.7) {
-            LocalDateTime now = LocalDateTime.now();
-            String info = now + " 垃圾转运车辆严重偏少";
-            res.put("天府环境", info);
-            AlarmRecord record = new AlarmRecord();
-            record.setExactDate(now);
-            record.setTimeInterval("1 hour");
-            record.setName("天府环境");
-            record.setCategory("car_usage");
-            alarmRecordService.insertByDeDuplication(record);
-        }
+                double f1 = new BigDecimal((float) tianfuUse / tianfu).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                if (f1 < 0.7) {
+                    carUsageMap.put("tianfu" + hour, true);
+                    if (hour >= 13) {
+                        Boolean mark = true;
+                        for (int count = hour; count > hour - 4; count--) {
+                            mark = mark && carUsageMap.get("tianfu" + count);
+                        }
+                        if (mark) {
+                            LocalDateTime now = LocalDateTime.now();
+                            String info = now + " 过去4小时垃圾转运车辆严重偏少";
+                            res.put("天府环境", info);
+                            AlarmRecord record = new AlarmRecord();
+                            record.setExactDate(now);
+                            record.setTimeInterval("4 hour");
+                            record.setName("天府环境");
+                            record.setCategory("car_usage");
+                            alarmRecordService.insertByDeDuplication(record);
+                        }
+                    }
+                } else {
+                    carUsageMap.put("tianfu" + hour, false);
+                }
 
-        double f2 = new BigDecimal((float)renheUse/renhe).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        if (f2 < 0.7) {
-            LocalDateTime now = LocalDateTime.now();
-            String info = now + " 垃圾转运车辆严重偏少";
-            res.put("仁和星牛", info);
-            AlarmRecord record = new AlarmRecord();
-            record.setExactDate(now);
-            record.setTimeInterval("1 hour");
-            record.setName("仁和星牛");
-            record.setCategory("car_usage");
-            alarmRecordService.insertByDeDuplication(record);
+                double f2 = new BigDecimal((float) renheUse / renhe).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                if (f2 < 0.7) {
+                    carUsageMap.put("renhe" + hour, true);
+                    if (hour >= 13) {
+                        Boolean mark1 = true;
+                        for (int count = hour; count > hour - 4; count--) {
+                            mark1 = mark1 && carUsageMap.get("renhe" + count);
+                        }
+                        if (mark1) {
+                            LocalDateTime now = LocalDateTime.now();
+                            String info = now + " 过去4小时垃圾转运车辆严重偏少";
+                            res.put("仁和星牛", info);
+                            AlarmRecord record = new AlarmRecord();
+                            record.setExactDate(now);
+                            record.setTimeInterval("4 hour");
+                            record.setName("仁和星牛");
+                            record.setCategory("car_usage");
+                            alarmRecordService.insertByDeDuplication(record);
+                        }
+                    }
+                } else {
+                    carUsageMap.put("renhe" + hour, false);
+                }
+            }
+        } else {
+            carUsageMap.clear();
         }
     }
 }
