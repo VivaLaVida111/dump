@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.dump.mapper.EventQueryMapper">
+
+    <select id="warningOfSite" resultType="com.example.dump.entity.WarningOfSite">
+        SELECT event_source as eventSource,event_cause as eventCause, `event_time` as `eventTime`, issue_duration as issueDuration from event_query dr
+        WHERE `event_time` between #{start} and #{end}
+        <if test="event_source != null and event_source == '大站'">
+            and (event_source = '红星' or event_source = '西华')
+        </if>
+        <if test="event_source != null and event_source == '小站'">
+            and (event_source = '红花堰' or event_source = '五块石' or event_source = '五里墩')
+        </if>
+        <if test="event_source != null and event_source != '大站' and event_source != '小站'">
+            and event_source = #{event_source}
+        </if>
+
+    </select>
+
+</mapper>

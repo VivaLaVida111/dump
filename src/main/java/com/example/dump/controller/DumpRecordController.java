@@ -4,6 +4,7 @@ package com.example.dump.controller;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.URLUtil;
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -58,6 +59,16 @@ public class DumpRecordController {
         return dumpRecordService.selectBySiteName(site_name);
     }
 
+    /**
+     * 查询某个垃圾站一段时间之间的垃圾记录
+     * @param site_name 站点名
+     * @param transporter
+     * @param start 起始时间
+     * @param end 终止时间 格式：YYYY-MM-DDTHH:mm:ss
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     @ApiOperation(value = "分页条件查询：siteName, transporter, start, end, pageNum, pageSize")
     @GetMapping("/page/{site_name}/{transporter}/{start}/{end}/{pageNum}/{pageSize}")
     public List<DumpRecord> conditionSelectAndPage(@PathVariable String site_name, @RequestParam(required = false) String transporter,
@@ -65,6 +76,25 @@ public class DumpRecordController {
                                                    @PathVariable Integer pageNum, @PathVariable Integer pageSize) {
         return dumpRecordService.conditionSelectAndPage(site_name, transporter, start, end, pageNum, pageSize);
     }
+
+    /**
+     * 查询某个垃圾站一段时间之间的垃圾总净重量，精确到某个具体的时间范围
+     * @param site_name 站点名
+     * @param start 起始时间
+     * @param end 终止时间 格式：YYYY-MM-DDTHH:mm:ss
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @ApiOperation(value = "一段时间内的垃圾总量：siteName, start, end, pageNum, pageSize")
+    @GetMapping("/getSum/{site_name}/{start}/{end}/{pageNum}/{pageSize}")
+    public JSONObject getSumByDuration(@PathVariable String site_name,
+                                                   @PathVariable String start, @PathVariable String end,
+                                                   @PathVariable Integer pageNum, @PathVariable Integer pageSize) {
+        return dumpRecordService.getSumByDuration(site_name,  start, end, pageNum, pageSize);
+    }
+
+
 
     @ApiOperation(value = "分页查询")
     @ApiImplicitParams(value = {
@@ -138,11 +168,25 @@ public class DumpRecordController {
         EasyExcel.write(response.getOutputStream(), DumpDataOfSite.class).sheet(name).doWrite(data);
     }
 
+    /**
+     * 返回站点每日垃圾量以及一段日期内的垃圾净重总和，没精确到具体的时分秒，以天为单位
+     * @param start
+     * @param end
+     * @param site_name
+     * @return
+     */
     @ApiOperation(value = "站点每日垃圾量查询;只返回数组，不返回Excel")
     @GetMapping("/site_data_day_array/{start}/{end}/{site_name}")
     public List<DumpDataOfSite> dumpDataOfSiteArray(@PathVariable String start, @PathVariable String end,
                                                @PathVariable String site_name) {
         return dumpRecordService.dumpDataOfSite(start, end, site_name);
+    }
+
+
+    @ApiOperation(value = "站点今日预测值，根据过去一周从零点到当前时分秒的垃圾净重总量求平均值")
+    @GetMapping("/getPredictByStation/{site_name}")
+    public JSONObject getPredictByStation(@PathVariable String site_name) {
+        return dumpRecordService.getPredictByStation(site_name);
     }
 }
 
