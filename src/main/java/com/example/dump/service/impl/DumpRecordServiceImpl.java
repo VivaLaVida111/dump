@@ -80,7 +80,7 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
             wrapper.eq("site_name", site_name);
         if(start != null && end != null)
             wrapper.between("exact_date", start, end);
-        // 使用 select 方法选择需要的字段，并且使用 select 表达式对字段进行求和
+
         wrapper.select("SUM(net_weight) AS net_weight");
 
         //垃圾站出现异常时设置垃圾量的默认值为0
@@ -101,6 +101,9 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
         res.put("net_weight",sumResult);
         return res;
     }
+
+
+
     @Override
     public JSONObject getPredictByStation(String site_name) {
         JSONObject res = new JSONObject();
@@ -111,8 +114,8 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
             predictWeight =Double.parseDouble(String.valueOf(getPredict("西华").get("predictWeight")))  + Double.parseDouble(String.valueOf(getPredict("红星").get("predictWeight")));
 
         }else if(site_name.equals("小站")){
-            todayWeight =Double.parseDouble(String.valueOf(getPredict("五里墩").get("actualWeight")))  + Double.parseDouble(String.valueOf(getPredict("红花堰").get("actualWeight"))) + Double.parseDouble(String.valueOf(getPredict("五块石").get("actualWeight")));
-            predictWeight =Double.parseDouble(String.valueOf(getPredict("五里墩").get("predictWeight")))  + Double.parseDouble(String.valueOf(getPredict("红花堰").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("五块石").get("predictWeight")));
+            todayWeight =Double.parseDouble(String.valueOf(getPredict("五里墩").get("actualWeight")))  + Double.parseDouble(String.valueOf(getPredict("红花堰").get("actualWeight"))) + Double.parseDouble(String.valueOf(getPredict("五块石").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("泉水").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("营门口").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("金泉").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("西北桥").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("黄忠").get("actualWeight")));
+            predictWeight =Double.parseDouble(String.valueOf(getPredict("五里墩").get("predictWeight")))  + Double.parseDouble(String.valueOf(getPredict("红花堰").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("五块石").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("泉水").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("营门口").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("金泉").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("西北桥").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("黄忠").get("predictWeight")));
         }else{
             todayWeight =Double.parseDouble(String.valueOf(getPredict(site_name).get("actualWeight")));
             predictWeight =Double.parseDouble(String.valueOf(getPredict(site_name).get("predictWeight")));
@@ -146,6 +149,11 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
         String honghuayan =  String.valueOf(getPredictByStation("红花堰").get("status"));
         String wulidun =  String.valueOf(getPredictByStation("五里墩").get("status"));
         String wukuaishi =  String.valueOf(getPredictByStation("五块石").get("status"));
+        String quanshui =  String.valueOf(getPredictByStation("泉水").get("status"));
+        String yingmenkou =  String.valueOf(getPredictByStation("营门口").get("status"));
+        String jinquan =  String.valueOf(getPredictByStation("金泉").get("status"));
+        String xibeiqiao =  String.valueOf(getPredictByStation("西北桥").get("status"));
+        String huangzhong =  String.valueOf(getPredictByStation("黄忠").get("status"));
         LocalDateTime now = LocalDateTime.now();
         if(!xihua.equals("正常")){
 
@@ -162,6 +170,21 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
         }
         if(!wukuaishi.equals("正常")){
             res.put("五块石",now+" "+wukuaishi);
+        }
+        if(!wukuaishi.equals("正常")){
+            res.put("泉水",now+" "+quanshui);
+        }
+        if(!wukuaishi.equals("正常")){
+            res.put("营门口",now+" "+yingmenkou);
+        }
+        if(!wukuaishi.equals("正常")){
+            res.put("金泉",now+" "+jinquan);
+        }
+        if(!wukuaishi.equals("正常")){
+            res.put("西北桥",now+" "+xibeiqiao);
+        }
+        if(!wukuaishi.equals("正常")){
+            res.put("黄忠",now+" "+huangzhong);
         }
     }
 

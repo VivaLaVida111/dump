@@ -96,6 +96,7 @@ public class DumpRecordController {
 
 
 
+
     @ApiOperation(value = "分页查询")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "pageNum", value = "要查询第几页", dataType = "int", required = true),
@@ -175,7 +176,7 @@ public class DumpRecordController {
      * @param site_name
      * @return
      */
-    @ApiOperation(value = "站点每日垃圾量查询;只返回数组，不返回Excel")
+    @ApiOperation(value = "站点每日垃圾总量查询;只返回数组，不返回Excel")
     @GetMapping("/site_data_day_array/{start}/{end}/{site_name}")
     public List<DumpDataOfSite> dumpDataOfSiteArray(@PathVariable String start, @PathVariable String end,
                                                @PathVariable String site_name) {
@@ -183,7 +184,7 @@ public class DumpRecordController {
     }
 
 
-    @ApiOperation(value = "站点今日预测值，根据过去一周从零点到当前时分秒的垃圾净重总量求平均值")
+    @ApiOperation(value = "站点今日预测值，根据过去一周从零点到当前时分秒的垃圾净重总量求平均值。并且判断是否超过阈值，生成告警事件")
     @GetMapping("/getPredictByStation/{site_name}")
     public JSONObject getPredictByStation(@PathVariable String site_name) {
         return dumpRecordService.getPredictByStation(site_name);

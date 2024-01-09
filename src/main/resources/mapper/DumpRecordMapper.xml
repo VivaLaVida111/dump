@@ -18,7 +18,7 @@
             and (site_name = '红星' or site_name = '西华')
         </if>
         <if test="site_name != null and site_name == 'small_stations'">
-            and (site_name = '红花堰' or site_name = '五块石' or site_name = '五里墩')
+            and (site_name = '红花堰' or site_name = '五块石' or site_name = '五里墩' or site_name = '泉水' or site_name = '营门口' or site_name = '金泉' or site_name = '西北桥' or site_name = '黄忠')
         </if>
         <if test="site_name != null and site_name != 'big_stations' and site_name != 'small_stations'">
             and site_name = #{site_name}
@@ -86,7 +86,7 @@
             and (site_name = '红星' or site_name = '西华')
         </if>
         <if test="site_name != null and site_name == 'small_stations'">
-            and (site_name = '红花堰' or site_name = '五块石' or site_name = '五里墩')
+            and (site_name = '红花堰' or site_name = '五块石' or site_name = '五里墩' or site_name = '泉水' or site_name = '营门口' or site_name = '金泉' or site_name = '西北桥' or site_name = '黄忠')
         </if>
         <if test="site_name != null and site_name != 'big_stations' and site_name != 'small_stations'">
             and site_name = #{site_name}

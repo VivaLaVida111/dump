@@ -27,6 +27,7 @@ public interface IDumpRecordService extends IService<DumpRecord> {
 
     JSONObject getSumByDuration(String site_name, String start, String end,Integer pageNum,Integer pageSize);
 
+
     JSONObject getPredictByStation(String site_name);
 
     JSONObject getPredict(String site_name);
