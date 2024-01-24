@@ -35,5 +35,7 @@ public interface DumpRecordMapper extends BaseMapper<DumpRecord> {
 
     List<DumpDataOfSite> dumpDataOfSite(@Param("start") String start, @Param("end") String end, @Param("site_name") String site_name);
 
+    List<DumpRecordOfSiteByTrans> dumpRecordOfSiteByTrans(@Param("start") String start, @Param("end") String end, @Param("site_name") String site_name);
+
     List<DBStatus> checkStatus();
 }

@@ -94,6 +94,12 @@
         group by site_name, `day`
     </select>
 
+    <select id="dumpRecordOfSiteByTrans" resultType="com.example.dump.entity.DumpRecordOfSiteByTrans">
+        SELECT  site_name as siteName, transporter, exact_date as exactDate, car_number as carNumber, gross_weight as grossWeight, tare_weight as tareWeight, net_weight as netWeight from dump_record dr
+        WHERE site_name = #{site_name} and `day` between #{start} and #{end}
+        order by transporter
+    </select>
+
     <select id="checkStatus" resultType="com.example.dump.entity.DBStatus">
         select a.site_name as siteName, a.predict, b.actual
         from

@@ -8,10 +8,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.dump.entity.CarData;
-import com.example.dump.entity.DumpDataOfCar;
-import com.example.dump.entity.DumpDataOfSite;
-import com.example.dump.entity.DumpRecord;
+import com.example.dump.entity.*;
 import com.example.dump.service.IDumpRecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -167,6 +164,21 @@ public class DumpRecordController {
         //System.out.println(URLUtil.decode(encodedFileName, CharsetUtil.CHARSET_UTF_8));
 
         EasyExcel.write(response.getOutputStream(), DumpDataOfSite.class).sheet(name).doWrite(data);
+    }
+
+    @ApiOperation(value = "查询站点垃圾记录并按承运单位排序")
+    @GetMapping("/record_site_trans/{start}/{end}/{site_name}")
+    public void dumpRecordOfSiteByTrans(HttpServletResponse response, @PathVariable String start, @PathVariable String end,
+                               @PathVariable String site_name) throws IOException {
+        List<DumpRecordOfSiteByTrans> data = dumpRecordService.dumpRecordOfSiteByTrans(start, end, site_name);
+        // 设置文本内省
+        response.setContentType("application/vnd.ms-excel");
+        // 设置字符编码
+        response.setCharacterEncoding("utf-8");
+        String name = site_name + start + "至" + end + "垃圾记录统计" + ".xlsx";
+        String encodedFileName = URLUtil.encode(name, CharsetUtil.CHARSET_UTF_8);
+        response.setHeader("Content-disposition",  "attachment;filename="+encodedFileName);
+        EasyExcel.write(response.getOutputStream(), DumpRecordOfSiteByTrans.class).sheet(name).doWrite(data);
     }
 
     /**

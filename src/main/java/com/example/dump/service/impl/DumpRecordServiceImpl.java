@@ -1,28 +1,22 @@
 package com.example.dump.service.impl;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.dump.entity.*;
-import com.example.dump.mapper.AlarmRecordMapper;
 import com.example.dump.mapper.DumpRecordMapper;
 import com.example.dump.service.IAlarmRecordService;
 import com.example.dump.service.IDumpRecordService;
 import com.example.dump.service.IGpsRecordService;
-import jdk.nashorn.internal.runtime.regexp.JoniRegExp;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -291,6 +285,12 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
         }
         total.setWeight(count);
         res.add(total);
+        return res;
+    }
+
+    @Override
+    public List<DumpRecordOfSiteByTrans> dumpRecordOfSiteByTrans(String start, String end, String site_name) {
+        List<DumpRecordOfSiteByTrans> res =  dumpRecordMapper.dumpRecordOfSiteByTrans(start, end, site_name);
         return res;
     }
 
