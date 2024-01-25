@@ -14,9 +14,6 @@ public class DumpRecordOfSiteByTrans implements Serializable {
     @ExcelProperty("站点")
     @ColumnWidth(20)
     private String siteName;
-    @ExcelProperty("街道")
-    @ColumnWidth(20)
-    private String transporter;
     @ExcelProperty("日期/时间")
     @ColumnWidth(25)
     @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
@@ -24,6 +21,9 @@ public class DumpRecordOfSiteByTrans implements Serializable {
     @ExcelProperty("车牌号")
     @ColumnWidth(20)
     private String carNumber;
+    @ExcelProperty("街道")
+    @ColumnWidth(20)
+    private String transporter;
     @ExcelProperty("毛重/kg")
     @ColumnWidth(20)
     private Integer grossWeight;
