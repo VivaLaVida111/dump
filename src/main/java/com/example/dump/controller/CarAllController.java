@@ -32,12 +32,22 @@ public class CarAllController {
     @Resource
     private ICarAllService carAllService;
 
+    /**
+     * 返回天府环境和仁和星牛的所有车辆数据
+     * @return
+     */
     @ApiOperation(value = "查询全部车辆")
     @GetMapping()
     public List<CarAll> getAll() {
         return carAllService.list();
     }
 
+    /**
+     * 分页查询返回天府环境和仁和星牛的车辆数据
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     @ApiOperation(value = "分页查询")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "pageNum", value = "要查询第几页", dataType = "int", required = true),
