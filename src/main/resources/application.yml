@@ -6,8 +6,8 @@ spring:
     url: jdbc:mysql://localhost:3306/dumpsite?useSSL=true&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
 server:
-#  port: 9092
-  port:8870
+  port: 9092
+
 
 
 #mybatis-plus:
