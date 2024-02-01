@@ -35,6 +35,10 @@ public class ResponseDataUtil {
         return new ResponseData<T>(resultEnum);
     }
 
+    public static <T> ResponseData<T> Failed(Integer code, String msg, T data) {
+        return new ResponseData<T>(code, msg, data);
+    }
+
     public static <T> ResponseData<T> Error(T data) {
         return new ResponseData<T>(ResultEnum.FAILED, data);
     }
