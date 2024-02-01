@@ -1,12 +1,31 @@
 spring:
   datasource:
-    username: root
-    password: jinNIU123456!
-    #url: jdbc:mysql://101.37.246.72:3306/dumpsite?useSSL=true&serverTimezone=UTC
-    url: jdbc:mysql://localhost:3306/dumpsite?useSSL=true&serverTimezone=UTC
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    dynamic:
+      primary: master #设置默认的数据源或者数据源组,默认值即为master
+      strict: true  #设置严格模式,默认false不启动. 启动后在未匹配到指定数据源时候会抛出异常,不启动则使用默认数据源.
+      datasource:
+        master:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          #url: jdbc:mysql://101.37.246.72:3306/dumpsite?useSSL=true&serverTimezone=UTC
+          url: jdbc:mysql://localhost:3306/dumpsite?useSSL=true&serverTimezone=UTC
+          username: root
+          password: jinNIU123456!
+        login:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          #url: jdbc:mysql://101.37.246.72:3306/mock?useSSL=true&serverTimezone=UTC
+          url: jdbc:mysql://localhost:3306/mock?useSSL=true&serverTimezone=UTC
+          username: root
+          password: jinNIU123456!
 server:
   port: 8870
+jwt:
+  tokenHeader: Authorization #JWT存储的请求头
+  #JWT加解密使用的密钥
+  secret: cubdncudbvkocjzocdsopsccnjxcnjdaeoqmxqlkxascicnzjcievmxnvdoaskxnnv
+  expiration: 604800 #JWT的超期限时间(60*60*24)
+  tokenHead: Bearer  #JWT负载中拿到开头
+
+
 
 
 #mybatis-plus:
