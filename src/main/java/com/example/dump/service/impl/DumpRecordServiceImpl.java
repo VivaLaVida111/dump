@@ -298,9 +298,9 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
     public void checkDB(Map<String, String> res) {
         List<DBStatus> list = dumpRecordMapper.checkStatus();
         for (DBStatus item : list) {
-            if ((item.getPredict() != null && item.getPredict() > 0) && (item.getActual() == null || item.getActual() < item.getPredict() / 10)) {
+            if ((item.getPredict() != null && item.getPredict() > 0) && (item.getActual() == null || item.getActual() <= item.getPredict() / 10)) {
                 LocalDateTime now = LocalDateTime.now();
-                String info = now + " 进站数据小于预测值的10%";
+                String info = now + " 进站数据小于等于预测值的10%";
                 res.put(item.getSiteName(), info);
                 AlarmRecord record = new AlarmRecord();
                 record.setExactDate(now);
