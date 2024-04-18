@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -296,20 +297,44 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
 
     @Override
     public void checkDB(Map<String, String> res) {
+        // map保存所有站点，这个检查算法只会涉及到近一周的数据，如果某站点持续一周没有任何数据，list中没有该站点记录；所以需要map来筛选没有出现的站点
+        Map<String, Integer> siteCount = new HashMap<String, Integer>() {
+            {
+                put("红星", 0);
+                put("西华", 0);
+                put("红花堰", 0);
+                put("五块石", 0);
+                put("五里墩", 0);
+                put("泉水", 0);
+                put("营门口", 0);
+                put("金泉", 0);
+                put("西北桥", 0);
+                put("黄忠", 0);
+            }
+        };
         List<DBStatus> list = dumpRecordMapper.checkStatus();
         for (DBStatus item : list) {
-            if ((item.getPredict() != null && item.getPredict() > 0) && (item.getActual() == null || item.getActual() <= item.getPredict() / 10)) {
-                LocalDateTime now = LocalDateTime.now();
-                String info = now + " 进站数据小于等于预测值的10%";
-                res.put(item.getSiteName(), info);
-                AlarmRecord record = new AlarmRecord();
-                record.setExactDate(now);
-                record.setTimeInterval("00:00 to now");
-                record.setName(item.getSiteName());
-                record.setCategory("DB_status");
-                alarmRecordService.insertByDeDuplication(record);
+            siteCount.remove(item.getSiteName());
+            if (item.getActual() == null || item.getActual() == 0 || (item.getPredict() != null && item.getPredict() > 0 && item.getActual() <= item.getPredict() / 10)) {
+                writeStatus(res, item.getSiteName());
             }
         }
+        // 持续一周没有任何数据的站点
+        for (String key : siteCount.keySet()) {
+            writeStatus(res, key);
+        }
+    }
+
+    private void writeStatus(Map<String, String> res, String siteName) {
+        LocalDateTime now = LocalDateTime.now();
+        String info = now + " 进站数据小于等于预测值的10%";
+        res.put(siteName, info);
+        AlarmRecord record = new AlarmRecord();
+        record.setExactDate(now);
+        record.setTimeInterval("00:00 to now");
+        record.setName(siteName);
+        record.setCategory("DB_status");
+        alarmRecordService.insertByDeDuplication(record);
     }
 
 }
