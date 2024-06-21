@@ -109,8 +109,8 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
             predictWeight =Double.parseDouble(String.valueOf(getPredict("西华").get("predictWeight")))  + Double.parseDouble(String.valueOf(getPredict("红星").get("predictWeight")));
 
         }else if(site_name.equals("小站")){
-            todayWeight =Double.parseDouble(String.valueOf(getPredict("五里墩").get("actualWeight")))  + Double.parseDouble(String.valueOf(getPredict("红花堰").get("actualWeight"))) + Double.parseDouble(String.valueOf(getPredict("五块石").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("泉水").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("营门口").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("金泉").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("西北桥").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("黄忠").get("actualWeight")));
-            predictWeight =Double.parseDouble(String.valueOf(getPredict("五里墩").get("predictWeight")))  + Double.parseDouble(String.valueOf(getPredict("红花堰").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("五块石").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("泉水").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("营门口").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("金泉").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("西北桥").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("黄忠").get("predictWeight")));
+            todayWeight =Double.parseDouble(String.valueOf(getPredict("五里墩").get("actualWeight")))  + Double.parseDouble(String.valueOf(getPredict("红花堰").get("actualWeight"))) + Double.parseDouble(String.valueOf(getPredict("蜀道园").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("泉水").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("营门口").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("金泉").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("西北桥").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("黄忠").get("actualWeight")));
+            predictWeight =Double.parseDouble(String.valueOf(getPredict("五里墩").get("predictWeight")))  + Double.parseDouble(String.valueOf(getPredict("红花堰").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("蜀道园").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("泉水").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("营门口").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("金泉").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("西北桥").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("黄忠").get("predictWeight")));
         }else{
             todayWeight =Double.parseDouble(String.valueOf(getPredict(site_name).get("actualWeight")));
             predictWeight =Double.parseDouble(String.valueOf(getPredict(site_name).get("predictWeight")));
@@ -143,7 +143,7 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
         String hongxing =  String.valueOf(getPredictByStation("红星").get("status"));
         String honghuayan =  String.valueOf(getPredictByStation("红花堰").get("status"));
         String wulidun =  String.valueOf(getPredictByStation("五里墩").get("status"));
-        String wukuaishi =  String.valueOf(getPredictByStation("五块石").get("status"));
+        String wukuaishi =  String.valueOf(getPredictByStation("蜀道园").get("status"));
         String quanshui =  String.valueOf(getPredictByStation("泉水").get("status"));
         String yingmenkou =  String.valueOf(getPredictByStation("营门口").get("status"));
         String jinquan =  String.valueOf(getPredictByStation("金泉").get("status"));
@@ -164,7 +164,7 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
             res.put("五里墩",now+" "+wulidun);
         }
         if(!wukuaishi.equals("正常")){
-            res.put("五块石",now+" "+wukuaishi);
+            res.put("蜀道园",now+" "+wukuaishi);
         }
         if(!wukuaishi.equals("正常")){
             res.put("泉水",now+" "+quanshui);
@@ -303,7 +303,7 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
                 put("红星", 0);
                 put("西华", 0);
                 put("红花堰", 0);
-                put("五块石", 0);
+                put("蜀道园", 0);
                 put("五里墩", 0);
                 put("泉水", 0);
                 put("营门口", 0);

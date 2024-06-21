@@ -179,13 +179,13 @@ public class EventQueryServiceImpl extends ServiceImpl<EventQueryMapper, EventQu
         //查询某个站点
         if(site_name !=null){
             if(site_name.equals("所有站点")){
-                List<String> siteNames = Arrays.asList("西华", "红星","五里墩", "五块石","红花堰");
+                List<String> siteNames = Arrays.asList("西华", "红星","五里墩", "蜀道园","红花堰");
                 lambdaQueryWrapper.in(EventQuery::getEventSource, siteNames);
             }else if(site_name.equals("大站")) {
                 List<String> siteNames = Arrays.asList("西华", "红星");
                 lambdaQueryWrapper.in(EventQuery::getEventSource, siteNames);
             }else if(site_name.equals("小站")){
-                List<String> siteNames = Arrays.asList("五里墩", "五块石","红花堰");
+                List<String> siteNames = Arrays.asList("五里墩", "蜀道园","红花堰");
                 lambdaQueryWrapper.in(EventQuery::getEventSource, siteNames);
             }else{
                 lambdaQueryWrapper.eq(EventQuery::getEventSource,site_name);
