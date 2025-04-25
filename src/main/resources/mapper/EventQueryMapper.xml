@@ -9,7 +9,7 @@
             and (event_source = '红星' or event_source = '西华')
         </if>
         <if test="event_source != null and event_source == '小站'">
-            and (event_source = '红花堰' or event_source = '五块石' or event_source = '五里墩' or event_source = '泉水' or event_source = '金泉' or event_source = '黄忠' or event_source = '西北桥' or event_source = '营门口' )
+            and (event_source = '红花堰' or event_source = '蜀道园' or event_source = '五里墩' or event_source = '泉水' or event_source = '金泉' or event_source = '黄忠' or event_source = '西北桥' or event_source = '营门口' )
         </if>
         <if test="event_source != null and event_source != '大站' and event_source != '小站'">
             and event_source = #{event_source}

@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,8 +61,12 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
             wrapper.eq("site_name", site_name);
         if(transporter != null)
             wrapper.eq("transporter", transporter);
-        if(start != null && end != null)
+        if(start != null && end != null) {
+            // 添加查询条件进而使用二级索引，显著加快查询速度，避免请求超时的情况
+            //wrapper.between("`day`", start.split("T")[0], end.split("T")[0]);
+            wrapper.between("`day`", start, end);
             wrapper.between("exact_date", start, end);
+        }
 
         return dumpRecordMapper.selectPage(page, wrapper).getRecords();
     }
@@ -108,8 +113,8 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
             predictWeight =Double.parseDouble(String.valueOf(getPredict("西华").get("predictWeight")))  + Double.parseDouble(String.valueOf(getPredict("红星").get("predictWeight")));
 
         }else if(site_name.equals("小站")){
-            todayWeight =Double.parseDouble(String.valueOf(getPredict("五里墩").get("actualWeight")))  + Double.parseDouble(String.valueOf(getPredict("红花堰").get("actualWeight"))) + Double.parseDouble(String.valueOf(getPredict("五块石").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("泉水").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("营门口").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("金泉").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("西北桥").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("黄忠").get("actualWeight")));
-            predictWeight =Double.parseDouble(String.valueOf(getPredict("五里墩").get("predictWeight")))  + Double.parseDouble(String.valueOf(getPredict("红花堰").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("五块石").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("泉水").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("营门口").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("金泉").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("西北桥").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("黄忠").get("predictWeight")));
+            todayWeight =Double.parseDouble(String.valueOf(getPredict("五里墩").get("actualWeight")))  + Double.parseDouble(String.valueOf(getPredict("红花堰").get("actualWeight"))) + Double.parseDouble(String.valueOf(getPredict("蜀道园").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("泉水").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("营门口").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("金泉").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("西北桥").get("actualWeight")))+ Double.parseDouble(String.valueOf(getPredict("黄忠").get("actualWeight")));
+            predictWeight =Double.parseDouble(String.valueOf(getPredict("五里墩").get("predictWeight")))  + Double.parseDouble(String.valueOf(getPredict("红花堰").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("蜀道园").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("泉水").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("营门口").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("金泉").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("西北桥").get("predictWeight")))+ Double.parseDouble(String.valueOf(getPredict("黄忠").get("predictWeight")));
         }else{
             todayWeight =Double.parseDouble(String.valueOf(getPredict(site_name).get("actualWeight")));
             predictWeight =Double.parseDouble(String.valueOf(getPredict(site_name).get("predictWeight")));
@@ -142,7 +147,7 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
         String hongxing =  String.valueOf(getPredictByStation("红星").get("status"));
         String honghuayan =  String.valueOf(getPredictByStation("红花堰").get("status"));
         String wulidun =  String.valueOf(getPredictByStation("五里墩").get("status"));
-        String wukuaishi =  String.valueOf(getPredictByStation("五块石").get("status"));
+        String wukuaishi =  String.valueOf(getPredictByStation("蜀道园").get("status"));
         String quanshui =  String.valueOf(getPredictByStation("泉水").get("status"));
         String yingmenkou =  String.valueOf(getPredictByStation("营门口").get("status"));
         String jinquan =  String.valueOf(getPredictByStation("金泉").get("status"));
@@ -163,7 +168,7 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
             res.put("五里墩",now+" "+wulidun);
         }
         if(!wukuaishi.equals("正常")){
-            res.put("五块石",now+" "+wukuaishi);
+            res.put("蜀道园",now+" "+wukuaishi);
         }
         if(!wukuaishi.equals("正常")){
             res.put("泉水",now+" "+quanshui);
@@ -296,20 +301,44 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
 
     @Override
     public void checkDB(Map<String, String> res) {
+        // map保存所有站点，这个检查算法只会涉及到近一周的数据，如果某站点持续一周没有任何数据，list中没有该站点记录；所以需要map来筛选没有出现的站点
+        Map<String, Integer> siteCount = new HashMap<String, Integer>() {
+            {
+                put("红星", 0);
+                put("西华", 0);
+                put("红花堰", 0);
+                put("蜀道园", 0);
+                put("五里墩", 0);
+                put("泉水", 0);
+                put("营门口", 0);
+                put("金泉", 0);
+                put("西北桥", 0);
+                put("黄忠", 0);
+            }
+        };
         List<DBStatus> list = dumpRecordMapper.checkStatus();
         for (DBStatus item : list) {
-            if ((item.getPredict() != null && item.getPredict() > 0) && (item.getActual() == null || item.getActual() < item.getPredict() / 10)) {
-                LocalDateTime now = LocalDateTime.now();
-                String info = now + " 进站数据小于预测值的10%";
-                res.put(item.getSiteName(), info);
-                AlarmRecord record = new AlarmRecord();
-                record.setExactDate(now);
-                record.setTimeInterval("00:00 to now");
-                record.setName(item.getSiteName());
-                record.setCategory("DB_status");
-                alarmRecordService.insertByDeDuplication(record);
+            siteCount.remove(item.getSiteName());
+            if (item.getActual() == null || item.getActual() == 0 || (item.getPredict() != null && item.getPredict() > 0 && item.getActual() <= item.getPredict() / 10)) {
+                writeStatus(res, item.getSiteName());
             }
         }
+        // 持续一周没有任何数据的站点
+        for (String key : siteCount.keySet()) {
+            writeStatus(res, key);
+        }
+    }
+
+    private void writeStatus(Map<String, String> res, String siteName) {
+        LocalDateTime now = LocalDateTime.now();
+        String info = now + " 进站数据小于等于预测值的10%";
+        res.put(siteName, info);
+        AlarmRecord record = new AlarmRecord();
+        record.setExactDate(now);
+        record.setTimeInterval("00:00 to now");
+        record.setName(siteName);
+        record.setCategory("DB_status");
+        alarmRecordService.insertByDeDuplication(record);
     }
 
 }
