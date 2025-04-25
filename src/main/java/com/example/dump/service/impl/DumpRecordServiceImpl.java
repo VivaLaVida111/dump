@@ -61,8 +61,12 @@ public class DumpRecordServiceImpl extends ServiceImpl<DumpRecordMapper, DumpRec
             wrapper.eq("site_name", site_name);
         if(transporter != null)
             wrapper.eq("transporter", transporter);
-        if(start != null && end != null)
+        if(start != null && end != null) {
+            // 添加查询条件进而使用二级索引，显著加快查询速度，避免请求超时的情况
+            //wrapper.between("`day`", start.split("T")[0], end.split("T")[0]);
+            wrapper.between("`day`", start, end);
             wrapper.between("exact_date", start, end);
+        }
 
         return dumpRecordMapper.selectPage(page, wrapper).getRecords();
     }
