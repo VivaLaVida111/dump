@@ -18,9 +18,17 @@ import java.util.List;
 
 public class QueryTianFu {
     private static String token = "";
-    private static final String secret = "606e87ed-6d0e-4a79-bd61-d710a07de0e0";
-    private static final String key = "40b66dec-a664-40ef-bc01-b13ad7094568";
+    private static String secret;
+    private static String key;
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryTianFu.class);
+
+    public static void setSecret(String secret) {
+        QueryTianFu.secret = secret;
+    }
+
+    public static void setKey(String key) {
+        QueryTianFu.key = key;
+    }
 
     public static String getToken() {
         if (!isValidToken()) {

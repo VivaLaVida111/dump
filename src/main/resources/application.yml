@@ -8,6 +8,10 @@ spring:
 server:
   port: 8870
 
+tianfu:
+  secret: "606e87ed-6d0e-4a79-bd61-d710a07de0e0"
+  key: "40b66dec-a664-40ef-bc01-b13ad7094568"
+
 
 #mybatis-plus:
 #  configuration:
